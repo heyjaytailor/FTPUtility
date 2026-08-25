@@ -1,0 +1,11 @@
+<Project>
+
+	<ItemGroup>
+		<ContentWithTargetPath Include="$(MSBuildThisFileDirectory)/../content/*.dll">
+			<PublishState>Included</PublishState>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<TargetPath>%(Filename)%(Extension)</TargetPath>
+		</ContentWithTargetPath>
+	</ItemGroup>
+
+</Project>

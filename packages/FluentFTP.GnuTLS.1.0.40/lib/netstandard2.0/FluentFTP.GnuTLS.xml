@@ -1,0 +1,789 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FluentFTP.GnuTLS</name>
+    </assembly>
+    <members>
+        <member name="T:FluentFTP.GnuTLS.Core.InitFlagsT">
+             gnutls_init_flags_t:
+            
+             @GNUTLS_SERVER: Connection end is a server.
+             @GNUTLS_CLIENT: Connection end is a client.
+             @GNUTLS_DATAGRAM: Connection is datagram oriented (DTLS). Since 3.0.0.
+             @GNUTLS_NONBLOCK: Connection should not block. Since 3.0.0.
+             @GNUTLS_NO_SIGNAL: In systems where SIGPIPE is delivered on send, it will be disabled. That flag has effect in systems which support the MSG_NOSIGNAL sockets flag (since 3.4.2).
+             @GNUTLS_NO_EXTENSIONS: Do not enable any TLS extensions by default (since 3.1.2). As TLS 1.2 and later require extensions this option is considered obsolete and should not be used.
+             @GNUTLS_NO_REPLAY_PROTECTION: Disable any replay protection in DTLS. This must only be used if  replay protection is achieved using other means. Since 3.2.2.
+             @GNUTLS_ALLOW_ID_CHANGE: Allow the peer to replace its certificate, or change its ID during a rehandshake. This change is often used in attacks and thus prohibited by default. Since 3.5.0.
+             @GNUTLS_ENABLE_FALSE_START: Enable the TLS false start on client side if the negotiated ciphersuites allow it. This will enable sending data prior to the handshake being complete, and may introduce a risk of crypto failure when combined with certain key exchanged; for that GnuTLS may not enable that option in ciphersuites that are known to be not safe for false start. Since 3.5.0.
+             @GNUTLS_ENABLE_EARLY_START: Under TLS1.3 allow the server to return earlier than the full handshake
+               finish; similarly to false start the handshake will be completed once data are received by the
+               client, while the server is able to transmit sooner. This is not enabled by default as it could
+               break certain existing server assumptions and use-cases. Since 3.6.4.
+             @GNUTLS_ENABLE_EARLY_DATA: Under TLS1.3 allow the server to receive early data sent as part of the initial ClientHello (0-RTT).
+               This can also be used to explicitly indicate that the client will send early data.
+               This is not enabled by default as early data has weaker security properties than other data. Since 3.6.5.
+             @GNUTLS_FORCE_CLIENT_CERT: When in client side and only a single cert is specified, send that certificate irrespective of the issuers expected by the server. Since 3.5.0.
+             @GNUTLS_NO_TICKETS: Flag to indicate that the session should not use resumption with session tickets.
+             @GNUTLS_NO_TICKETS_TLS12: Flag to indicate that the session should not use resumption with session tickets. This flag only has effect if TLS 1.2 is used.
+             @GNUTLS_KEY_SHARE_TOP3: Generate key shares for the top-3 different groups which are enabled.
+               That is, as each group is associated with a key type (EC, finite field, x25519), generate
+               three keys using %GNUTLS_PK_DH, %GNUTLS_PK_EC, %GNUTLS_PK_ECDH_X25519 if all of them are enabled.
+             @GNUTLS_KEY_SHARE_TOP2: Generate key shares for the top-2 different groups which are enabled.
+               For example (ECDH + x25519). This is the default.
+             @GNUTLS_KEY_SHARE_TOP: Generate key share for the first group which is enabled.
+               For example x25519. This option is the most performant for client (less CPU spent
+               generating keys), but if the server doesn't support the advertized option it may
+               result to more roundtrips needed to discover the server's choice.
+             @GNUTLS_NO_AUTO_REKEY: Disable auto-rekeying under TLS1.3. If this option is not specified
+               gnutls will force a rekey after 2^24 records have been sent.
+             @GNUTLS_POST_HANDSHAKE_AUTH: Enable post handshake authentication for server and client. When set and
+               a server requests authentication after handshake %GNUTLS_E_REAUTH_REQUEST will be returned
+               by gnutls_record_recv(). A client should then call gnutls_reauth() to re-authenticate.
+             @GNUTLS_SAFE_PADDING_CHECK: Flag to indicate that the TLS 1.3 padding check will be done in a
+               safe way which doesn't leak the pad size based on GnuTLS processing time. This is of use to
+               applications which hide the length of transferred data via the TLS1.3 padding mechanism and
+               are already taking steps to hide the data processing time. This comes at a performance
+               penalty.
+             @GNUTLS_AUTO_REAUTH: Enable transparent re-authentication in client side when the server
+                requests to. That is, reauthentication is handled within gnutls_record_recv(), and
+                the %GNUTLS_E_REHANDSHAKE or %GNUTLS_E_REAUTH_REQUEST are not returned. This must be
+                enabled with %GNUTLS_POST_HANDSHAKE_AUTH for TLS1.3. Enabling this flag requires to restore
+                interrupted calls to gnutls_record_recv() based on the output of gnutls_record_get_direction(),
+                since gnutls_record_recv() could be interrupted when sending when this flag is enabled.
+                Note this flag may not be used if you are using the same session for sending and receiving
+                in different threads.
+             @GNUTLS_ENABLE_RAWPK: Allows raw public-keys to be negotiated during the handshake. Since 3.6.6.
+             @GNUTLS_NO_AUTO_SEND_TICKET: Under TLS1.3 disable auto-sending of
+                session tickets during the handshake.
+             @GNUTLS_NO_END_OF_EARLY_DATA: Under TLS1.3 suppress sending EndOfEarlyData message. Since 3.7.2.
+            
+             Enumeration of different flags for gnutls_init() function. All the flags
+             can be combined except @GNUTLS_SERVER and @GNUTLS_CLIENT which are mutually
+             exclusive.
+            
+             The key share options relate to the TLS 1.3 key share extension
+             which is a speculative key generation expecting that the server
+             would support the generated key.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CloseRequestT">
+             gnutls_close_request_t:
+             @GNUTLS_SHUT_RDWR: Disallow further receives/sends.
+             @GNUTLS_SHUT_WR: Disallow further sends.
+            
+             Enumeration of how TLS session should be terminated.  See gnutls_bye().
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.ServerNameTypeT">
+             gnutls_server_name_type_t:
+             @GNUTLS_NAME_DNS: Domain Name System name type.
+            
+             Enumeration of different server name types.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CredentialsTypeT">
+             gnutls_credentials_type_t:
+             @GNUTLS_CRD_CERTIFICATE: Certificate credential.
+             @GNUTLS_CRD_ANON: Anonymous credential.
+             @GNUTLS_CRD_SRP: SRP credential.
+             @GNUTLS_CRD_PSK: PSK credential.
+             @GNUTLS_CRD_IA: IA credential.
+            
+             Enumeration of different credential types.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.AlpnFlagsT">
+             gnutls_alpn_flags_t:
+             @GNUTLS_ALPN_MANDATORY: Require ALPN negotiation. The connection will be
+               aborted if no matching ALPN protocol is found.
+             @GNUTLS_ALPN_SERVER_PRECEDENCE: The choices set by the server
+               will take precedence over the client's.
+            
+             Enumeration of different ALPN flags. These are used by gnutls_alpn_set_protocols().
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.ProtocolT">
+             gnutls_protocol_t:
+             @GNUTLS_SSL3: SSL version 3.0.
+             @GNUTLS_TLS1_0: TLS version 1.0.
+             @GNUTLS_TLS1: Same as %GNUTLS_TLS1_0.
+             @GNUTLS_TLS1_1: TLS version 1.1.
+             @GNUTLS_TLS1_2: TLS version 1.2.
+             @GNUTLS_TLS1_3: TLS version 1.3.
+             @GNUTLS_DTLS1_0: DTLS version 1.0.
+             @GNUTLS_DTLS1_2: DTLS version 1.2.
+             @GNUTLS_DTLS0_9: DTLS version 0.9 (Cisco AnyConnect / OpenSSL 0.9.8e).
+             @GNUTLS_TLS_VERSION_MAX: Maps to the highest supported TLS version.
+             @GNUTLS_DTLS_VERSION_MAX: Maps to the highest supported DTLS version.
+             @GNUTLS_VERSION_UNKNOWN: Unknown SSL/TLS version.
+            
+             Enumeration of different SSL/TLS protocol versions.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.HandshakeDescriptionT">
+             gnutls_handshake_description_t:
+             @GNUTLS_HANDSHAKE_HELLO_REQUEST: Hello request.
+             @GNUTLS_HANDSHAKE_HELLO_VERIFY_REQUEST: DTLS Hello verify request.
+             @GNUTLS_HANDSHAKE_CLIENT_HELLO: Client hello.
+             @GNUTLS_HANDSHAKE_SERVER_HELLO: Server hello.
+             @GNUTLS_HANDSHAKE_END_OF_EARLY_DATA: End of early data.
+             @GNUTLS_HANDSHAKE_HELLO_RETRY_REQUEST: Hello retry request.
+             @GNUTLS_HANDSHAKE_NEW_SESSION_TICKET: New session ticket.
+             @GNUTLS_HANDSHAKE_CERTIFICATE_PKT: Certificate packet.
+             @GNUTLS_HANDSHAKE_SERVER_KEY_EXCHANGE: Server key exchange.
+             @GNUTLS_HANDSHAKE_CERTIFICATE_REQUEST: Certificate request.
+             @GNUTLS_HANDSHAKE_SERVER_HELLO_DONE: Server hello done.
+             @GNUTLS_HANDSHAKE_CERTIFICATE_VERIFY: Certificate verify.
+             @GNUTLS_HANDSHAKE_CLIENT_KEY_EXCHANGE: Client key exchange.
+             @GNUTLS_HANDSHAKE_FINISHED: Finished.
+             @GNUTLS_HANDSHAKE_CERTIFICATE_STATUS: Certificate status (OCSP).
+             @GNUTLS_HANDSHAKE_KEY_UPDATE: TLS1.3 key update message.
+             @GNUTLS_HANDSHAKE_COMPRESSED_CERTIFICATE_PKT: Compressed certificate packet.
+             @GNUTLS_HANDSHAKE_SUPPLEMENTAL: Supplemental.
+             @GNUTLS_HANDSHAKE_CHANGE_CIPHER_SPEC: Change Cipher Spec.
+             @GNUTLS_HANDSHAKE_CLIENT_HELLO_V2: SSLv2 Client Hello.
+             @GNUTLS_HANDSHAKE_ENCRYPTED_EXTENSIONS: Encrypted extensions message.
+            
+             Enumeration of different TLS handshake packets.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.HandshakeHookT">
+             gnutls_handshake_hook_func:
+             @session: the current session
+             @htype: the type of the handshake message (%gnutls_handshake_description_t)
+             @when: non zero if this is a post-process/generation call and zero otherwise
+             @incoming: non zero if this is an incoming message and zero if this is an outgoing message
+             @msg: the (const) data of the handshake message without the handshake headers.
+            
+             Function prototype for handshake hooks. It is set using
+             gnutls_handshake_set_hook_function().
+            
+             Returns: Non zero on error.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.AlertLevelT">
+             gnutls_alert_level_t:
+             @GNUTLS_AL_WARNING: Alert of warning severity.
+             @GNUTLS_AL_FATAL: Alert of fatal severity.
+            
+             Enumeration of different TLS alert severities.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.AlertDescriptionT">
+             gnutls_alert_description_t:
+             @GNUTLS_A_CLOSE_NOTIFY: Close notify.
+             @GNUTLS_A_UNEXPECTED_MESSAGE: Unexpected message.
+             @GNUTLS_A_BAD_RECORD_MAC: Bad record MAC.
+             @GNUTLS_A_DECRYPTION_FAILED: Decryption failed.
+             @GNUTLS_A_RECORD_OVERFLOW: Record overflow.
+             @GNUTLS_A_DECOMPRESSION_FAILURE: Decompression failed.
+             @GNUTLS_A_HANDSHAKE_FAILURE: Handshake failed.
+             @GNUTLS_A_SSL3_NO_CERTIFICATE: No certificate.
+             @GNUTLS_A_BAD_CERTIFICATE: Certificate is bad.
+             @GNUTLS_A_UNSUPPORTED_CERTIFICATE: Certificate is not supported.
+             @GNUTLS_A_CERTIFICATE_REVOKED: Certificate was revoked.
+             @GNUTLS_A_CERTIFICATE_EXPIRED: Certificate is expired.
+             @GNUTLS_A_CERTIFICATE_UNKNOWN: Unknown certificate.
+             @GNUTLS_A_ILLEGAL_PARAMETER: Illegal parameter.
+             @GNUTLS_A_UNKNOWN_CA: CA is unknown.
+             @GNUTLS_A_ACCESS_DENIED: Access was denied.
+             @GNUTLS_A_DECODE_ERROR: Decode error.
+             @GNUTLS_A_DECRYPT_ERROR: Decrypt error.
+             @GNUTLS_A_EXPORT_RESTRICTION: Export restriction.
+             @GNUTLS_A_PROTOCOL_VERSION: Error in protocol version.
+             @GNUTLS_A_INSUFFICIENT_SECURITY: Insufficient security.
+             @GNUTLS_A_INTERNAL_ERROR: Internal error.
+             @GNUTLS_A_INAPPROPRIATE_FALLBACK: Inappropriate fallback,
+             @GNUTLS_A_USER_CANCELED: User canceled.
+             @GNUTLS_A_NO_RENEGOTIATION: No renegotiation is allowed.
+             @GNUTLS_A_MISSING_EXTENSION: An extension was expected but was not seen
+             @GNUTLS_A_UNSUPPORTED_EXTENSION: An unsupported extension was
+               sent.
+             @GNUTLS_A_CERTIFICATE_UNOBTAINABLE: Could not retrieve the
+               specified certificate.
+             @GNUTLS_A_UNRECOGNIZED_NAME: The server name sent was not
+               recognized.
+             @GNUTLS_A_UNKNOWN_PSK_IDENTITY: The SRP/PSK username is missing
+               or not known.
+             @GNUTLS_A_CERTIFICATE_REQUIRED: Certificate is required.
+             @GNUTLS_A_NO_APPLICATION_PROTOCOL: The ALPN protocol requested is
+               not supported by the peer.
+            
+             Enumeration of different TLS alerts.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.SessionFlagsT">
+             gnutls_session_flags_t:
+             @GNUTLS_SFLAGS_SAFE_RENEGOTIATION: Safe renegotiation (RFC5746) was used
+             @GNUTLS_SFLAGS_EXT_MASTER_SECRET: The extended master secret (RFC7627) extension was used
+             @GNUTLS_SFLAGS_ETM: The encrypt then MAC (RFC7366) extension was used
+             @GNUTLS_SFLAGS_RFC7919: The RFC7919 Diffie-Hellman parameters were negotiated
+             @GNUTLS_SFLAGS_HB_LOCAL_SEND: The heartbeat negotiation allows the local side to send heartbeat messages
+             @GNUTLS_SFLAGS_HB_PEER_SEND: The heartbeat negotiation allows the peer to send heartbeat messages
+             @GNUTLS_SFLAGS_FALSE_START: False start was used in this client session.
+             @GNUTLS_SFLAGS_SESSION_TICKET: A session ticket has been received by the server.
+             @GNUTLS_SFLAGS_POST_HANDSHAKE_AUTH: Indicates client capability for post-handshake auth; set only on server side.
+             @GNUTLS_SFLAGS_EARLY_START: The TLS1.3 server session returned early.
+             @GNUTLS_SFLAGS_EARLY_DATA: The TLS1.3 early data has been received by the server.
+             @GNUTLS_SFLAGS_CLI_REQUESTED_OCSP: Set when the client has requested OCSP staple during handshake.
+             @GNUTLS_SFLAGS_SERV_REQUESTED_OCSP: Set when the server has requested OCSP staple during handshake.
+            
+             Enumeration of different session parameters.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificateStatusT">
+             gnutls_certificate_status_t:
+             @GNUTLS_CERT_INVALID: The certificate is not signed by one of the
+               known authorities or the signature is invalid (deprecated by the flags 
+               %GNUTLS_CERT_SIGNATURE_FAILURE and %GNUTLS_CERT_SIGNER_NOT_FOUND).
+             @GNUTLS_CERT_SIGNATURE_FAILURE: The signature verification failed.
+             @GNUTLS_CERT_REVOKED: Certificate is revoked by its authority.  In X.509 this will be
+               set only if CRLs are checked.
+             @GNUTLS_CERT_SIGNER_NOT_FOUND: The certificate's issuer is not known. 
+               This is the case if the issuer is not included in the trusted certificate list.
+             @GNUTLS_CERT_SIGNER_NOT_CA: The certificate's signer was not a CA. This
+               may happen if this was a version 1 certificate, which is common with
+               some CAs, or a version 3 certificate without the basic constrains extension.
+             @GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE: The certificate's signer constraints were
+               violated.
+             @GNUTLS_CERT_INSECURE_ALGORITHM:  The certificate was signed using an insecure
+               algorithm such as MD2 or MD5. These algorithms have been broken and
+               should not be trusted.
+             @GNUTLS_CERT_NOT_ACTIVATED: The certificate is not yet activated.
+             @GNUTLS_CERT_EXPIRED: The certificate has expired.
+             @GNUTLS_CERT_REVOCATION_DATA_SUPERSEDED: The revocation data are old and have been superseded.
+             @GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE: The revocation data have a future issue date.
+             @GNUTLS_CERT_UNEXPECTED_OWNER: The owner is not the expected one.
+             @GNUTLS_CERT_MISMATCH: The certificate presented isn't the expected one (TOFU)
+             @GNUTLS_CERT_PURPOSE_MISMATCH: The certificate or an intermediate does not match the intended purpose (extended key usage).
+             @GNUTLS_CERT_MISSING_OCSP_STATUS: The certificate requires the server to send the certificate status, but no status was received.
+             @GNUTLS_CERT_INVALID_OCSP_STATUS: The received OCSP status response is invalid.
+             @GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS: The certificate has extensions marked as critical which are not supported.
+            
+             Enumeration of certificate status codes.  Note that the status
+             bits may have different meanings in OpenPGP keys and X.509
+             certificate verification.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificateRequestT">
+             gnutls_certificate_request_t:
+             @GNUTLS_CERT_IGNORE: Ignore certificate.
+             @GNUTLS_CERT_REQUEST: Request certificate.
+             @GNUTLS_CERT_REQUIRE: Require certificate.
+            
+             Enumeration of certificate request types.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificateVerifyFlagsT">
+             gnutls_certificate_verify_flags:
+             @GNUTLS_VERIFY_DISABLE_CA_SIGN: If set a signer does not have to be
+               a certificate authority. This flag should normally be disabled,
+               unless you know what this means.
+             @GNUTLS_VERIFY_DISABLE_TRUSTED_TIME_CHECKS: If set a signer in the trusted
+               list is never checked for expiration or activation.
+             @GNUTLS_VERIFY_DO_NOT_ALLOW_X509_V1_CA_CRT: Do not allow trusted CA
+               certificates that have version 1.  This option is to be used
+               to deprecate all certificates of version 1.
+             @GNUTLS_VERIFY_DO_NOT_ALLOW_SAME: If a certificate is not signed by
+               anyone trusted but exists in the trusted CA list do not treat it
+               as trusted.
+             @GNUTLS_VERIFY_ALLOW_UNSORTED_CHAIN: A certificate chain is tolerated
+               if unsorted (the case with many TLS servers out there). This is the
+               default since GnuTLS 3.1.4.
+             @GNUTLS_VERIFY_DO_NOT_ALLOW_UNSORTED_CHAIN: Do not tolerate an unsorted
+               certificate chain.
+             @GNUTLS_VERIFY_ALLOW_ANY_X509_V1_CA_CRT: Allow CA certificates that
+               have version 1 (both root and intermediate). This might be
+               dangerous since those haven't the basicConstraints
+               extension. 
+             @GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD2: Allow certificates to be signed
+               using the broken MD2 algorithm.
+             @GNUTLS_VERIFY_ALLOW_SIGN_RSA_MD5: Allow certificates to be signed
+               using the broken MD5 algorithm.
+             @GNUTLS_VERIFY_ALLOW_SIGN_WITH_SHA1: Allow certificates to be signed
+               using the broken SHA1 hash algorithm.
+             @GNUTLS_VERIFY_ALLOW_BROKEN: Allow certificates to be signed
+               using any broken algorithm.
+             @GNUTLS_VERIFY_DISABLE_TIME_CHECKS: Disable checking of activation
+               and expiration validity periods of certificate chains. Don't set
+               this unless you understand the security implications.
+             @GNUTLS_VERIFY_DISABLE_CRL_CHECKS: Disable checking for validity
+               using certificate revocation lists or the available OCSP data.
+             @GNUTLS_VERIFY_DO_NOT_ALLOW_WILDCARDS: When including a hostname
+               check in the verification, do not consider any wildcards.
+             @GNUTLS_VERIFY_DO_NOT_ALLOW_IP_MATCHES: When verifying a hostname
+               prevent textual IP addresses from matching IP addresses in the
+               certificate. Treat the input only as a DNS name.
+             @GNUTLS_VERIFY_USE_TLS1_RSA: This indicates that a (raw) RSA signature is provided
+               as in the TLS 1.0 protocol. Not all functions accept this flag.
+             @GNUTLS_VERIFY_IGNORE_UNKNOWN_CRIT_EXTENSIONS: This signals the verification
+               process, not to fail on unknown critical extensions.
+             @GNUTLS_VERIFY_RSA_PSS_FIXED_SALT_LENGTH: Disallow RSA-PSS signatures made
+               with mismatching salt length with digest length, as mandated in RFC 8446
+               4.2.3.
+            
+             Enumeration of different certificate verify flags. Additional
+             verification profiles can be set using GNUTLS_PROFILE_TO_VFLAGS()
+             and %gnutls_certificate_verification_profiles_t.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificateVerificationProfilesT">
+             gnutls_certificate_verification_profiles_t:
+             @GNUTLS_PROFILE_UNKNOWN: An invalid/unknown profile.
+             @GNUTLS_PROFILE_VERY_WEAK: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_VERY_WEAK (64 bits)
+             @GNUTLS_PROFILE_LOW: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_LOW (80 bits)
+             @GNUTLS_PROFILE_LEGACY: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_LEGACY (96 bits)
+             @GNUTLS_PROFILE_MEDIUM: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_MEDIUM (112 bits)
+             @GNUTLS_PROFILE_HIGH: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_HIGH (128 bits)
+             @GNUTLS_PROFILE_ULTRA: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_ULTRA (192 bits)
+             @GNUTLS_PROFILE_FUTURE: A verification profile that
+              corresponds to @GNUTLS_SEC_PARAM_FUTURE (256 bits)
+             @GNUTLS_PROFILE_SUITEB128: A verification profile that
+              applies the SUITEB128 rules
+             @GNUTLS_PROFILE_SUITEB192: A verification profile that
+              applies the SUITEB192 rules
+            
+             Enumeration of different certificate verification profiles.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificateTypeT">
+             gnutls_certificate_type_t:
+             @GNUTLS_CRT_UNKNOWN: Unknown certificate type.
+             @GNUTLS_CRT_X509: X.509 Certificate.
+             @GNUTLS_CRT_OPENPGP: OpenPGP certificate.
+             @GNUTLS_CRT_RAWPK: Raw public-key (SubjectPublicKeyInfo)
+            
+             Enumeration of different certificate types.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.X509CrtFmtT">
+             gnutls_x509_crt_fmt_t:
+             @GNUTLS_X509_FMT_DER: X.509 certificate in DER format (binary).
+             @GNUTLS_X509_FMT_PEM: X.509 certificate in PEM format (text).
+            
+             Enumeration of different certificate encoding formats.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CertificatePrintFormatsT">
+             gnutls_certificate_print_formats_t:
+             @GNUTLS_CRT_PRINT_FULL: Full information about certificate.
+             @GNUTLS_CRT_PRINT_FULL_NUMBERS: Full information about certificate and include easy to parse public key parameters.
+             @GNUTLS_CRT_PRINT_COMPACT: Information about certificate name in one line, plus identification of the public key.
+             @GNUTLS_CRT_PRINT_ONELINE: Information about certificate in one line.
+             @GNUTLS_CRT_PRINT_UNSIGNED_FULL: All info for an unsigned certificate.
+            
+             Enumeration of different certificate printing variants.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.CtypeTargetT">
+             gnutls_ctype_target_t:
+             @GNUTLS_CTYPE_CLIENT: for requesting client certificate type values.
+             @GNUTLS_CTYPE_SERVER: for requesting server certificate type values.
+             @GNUTLS_CTYPE_OURS: for requesting our certificate type values.
+             @GNUTLS_CTYPE_PEERS: for requesting the peers' certificate type values.
+            
+             Enumeration of certificate type targets with respect to asymmetric
+             certificate types as specified in RFC7250 and P2P connection set up
+             as specified in draft-vanrein-tls-symmetry-02.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.PkAlgorithmT">
+             gnutls_pk_algorithm_t:
+             @GNUTLS_PK_UNKNOWN: Unknown public-key algorithm.
+             @GNUTLS_PK_RSA: RSA public-key algorithm.
+             @GNUTLS_PK_RSA_PSS: RSA public-key algorithm, with PSS padding.
+             @GNUTLS_PK_DSA: DSA public-key algorithm.
+             @GNUTLS_PK_DH: Diffie-Hellman algorithm. Used to generate parameters.
+             @GNUTLS_PK_ECDSA: Elliptic curve algorithm. These parameters are compatible with the ECDSA and ECDH algorithm.
+             @GNUTLS_PK_ECDH_X25519: Elliptic curve algorithm, restricted to ECDH as per rfc7748.
+             @GNUTLS_PK_EDDSA_ED25519: Edwards curve Digital signature algorithm. Used with SHA512 on signatures.
+             @GNUTLS_PK_GOST_01: GOST R 34.10-2001 algorithm per rfc5832.
+             @GNUTLS_PK_GOST_12_256: GOST R 34.10-2012 algorithm, 256-bit key per rfc7091.
+             @GNUTLS_PK_GOST_12_512: GOST R 34.10-2012 algorithm, 512-bit key per rfc7091.
+             @GNUTLS_PK_ECDH_X448: Elliptic curve algorithm, restricted to ECDH as per rfc7748.
+             @GNUTLS_PK_EDDSA_ED448: Edwards curve Digital signature algorithm. Used with SHAKE256 on signatures.
+            
+             Enumeration of different public-key algorithms.
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Core.EC.errNo">
+            <summary>
+            Enum representing GnuTLS error codes.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Core.EC.ec">
+            <summary>
+            Dictionary mapping error code values to their string names.
+            Automatically generated from the enum to ensure consistency.
+            </summary>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.GetCurrentMethod(System.String)">
+            <summary>
+            Gets a formatted string representing the current method name.
+            </summary>
+            <param name="memberName">The caller member name (auto-populated).</param>
+            <returns>A string in the format "*MethodName(...)".</returns>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.Check(System.String,System.Int32,System.Int32[])">
+            <summary>
+            Checks the result of a GnuTLS operation and throws an exception if it's an error.
+            </summary>
+            <param name="methodName">The name of the method that produced the result.</param>
+            <param name="result">The result code from the GnuTLS operation.</param>
+            <param name="resultsAllowed">Optional allowed error codes that should not throw.</param>
+            <returns>The result if valid or allowed.</returns>
+            <exception cref="T:FluentFTP.GnuTLS.GnuTlsException">Thrown if the result indicates an error.</exception>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.Check(System.String,System.Int32,System.Boolean,System.Int32[])">
+            <summary>
+            Checks the result of a GnuTLS operation and throws an exception if it's an error, with optional debug logging.
+            </summary>
+            <param name="methodName">The name of the method that produced the result.</param>
+            <param name="result">The result code from the GnuTLS operation.</param>
+            <param name="debugLog">Whether to include debug logs in the exception.</param>
+            <param name="resultsAllowed">Optional allowed error codes that should not throw.</param>
+            <returns>The result if valid or allowed.</returns>
+            <exception cref="T:FluentFTP.GnuTLS.GnuTlsException">Thrown if the result indicates an error.</exception>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.GnuTlsErrorText(System.Int32)">
+            <summary>
+            Gets the human-readable text for a GnuTLS error code.
+            </summary>
+            <param name="errorCode">The error code.</param>
+            <returns>The error text, or "Unknown error" if not found.</returns>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.NeedRepeat(FluentFTP.GnuTLS.Core.GnuUtils.RepeatType,System.Int32)">
+            <summary>
+            Determines if a GnuTLS operation needs to be repeated based on the result.
+            </summary>
+            <param name="type">The type of operation.</param>
+            <param name="result">The result code.</param>
+            <returns>True if the operation should be repeated.</returns>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.GetLibVersion">
+            <summary>
+            Gets the version of the current library assembly.
+            </summary>
+            <returns>The assembly version as a string.</returns>
+        </member>
+        <member name="M:FluentFTP.GnuTLS.Core.GnuUtils.GetLibTarget">
+            <summary>
+            Gets the target framework moniker (TFM) for the current build.
+            </summary>
+            <returns>The TFM description.</returns>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Enums.GnuAdvanced">
+            <summary>
+            Advanced options to configure GnuTLS with.
+            Source : https://www.gnutls.org/manual/gnutls.html#tab_003aprio_002dspecial1
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.CompatibilityMode">
+            <summary>
+            will enable compatibility mode. It might mean that violations of the protocols are allowed as long as maximum compatibility with problematic clients and servers is achieved. More specifically this string will tolerate packets over the maximum allowed TLS record, and add a padding to TLS Client Hello packet to prevent it being in the 256-512 range which is known to be causing issues with a commonly used firewall (see the %DUMBFW option).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.DumbFirewall">
+            <summary>
+            will add a private extension with bogus data that make the client hello exceed 512 bytes. This avoids a black hole behavior in some firewalls. This is the [RFC7685] client hello padding extension, also enabled with %COMPAT.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoExtensions">
+            <summary>
+            will prevent the sending of any TLS extensions in client side. Note that TLS 1.2 requires extensions to be used, as well as safe renegotiation thus this option must be used with care. When this option is set no versions later than TLS1.2 can be negotiated.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoStatusRequest">
+            <summary>
+            will prevent sending of the TLS status_request extension in client side.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoTickets">
+            <summary>
+            will prevent the advertizing of the TLS session ticket extension.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoTicketsTls12">
+            <summary>
+            will prevent the advertizing of the TLS session ticket extension in TLS 1.2. This is implied by the PFS keyword.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoSessionHash">
+            <summary>
+            will prevent the advertizing the TLS extended master secret (session hash) extension.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.ServerPrecedence">
+            <summary>
+            The ciphersuite will be selected according to server priorities and not the client’s.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Ssl3RecordVersion">
+            <summary>
+            will use SSL3.0 record version in client hello. By default GnuTLS will set the minimum supported version as the client hello record version (do not confuse that version with the proposed handshake version at the client hello).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.LatestRecordVersion">
+            <summary>
+            will use the latest TLS version record version in client hello.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.DisableWildcards">
+            <summary>
+            will disable matching wildcards when comparing hostnames in certificates.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.NoEncryptThenMac">
+            <summary>
+            will disable the encrypt-then-mac TLS extension (RFC7366). This is implied by the %COMPAT keyword.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.ForceEncryptThenMac">
+            <summary>
+            negotiate CBC ciphersuites only when both sides of the connection support encrypt-then-mac TLS extension (RFC7366).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.DisableSafeRenegotiation">
+            <summary>
+            will completely disable safe renegotiation completely. Do not use unless you know what you are doing.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.UnsafeRenegotiation">
+            <summary>
+            will allow handshakes and re-handshakes without the safe renegotiation extension. Note that for clients this mode is insecure (you may be under attack), and for servers it will allow insecure clients to connect (which could be fooled by an attacker). Do not use unless you know what you are doing and want maximum compatibility.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.PartialRenegotiation">
+            <summary>
+            will allow initial handshakes to proceed, but not re-handshakes. This leaves the client vulnerable to attack, and servers will be compatible with non-upgraded clients for initial handshakes. This is currently the default for clients and servers, for compatibility reasons.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.SafeRenegotiation">
+            <summary>
+            will enforce safe renegotiation. Clients and servers will refuse to talk to an insecure peer. Currently this causes interoperability problems, but is required for full protection.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.FallbackScsv">
+            <summary>
+            will enable the use of the fallback signaling cipher suite value in the client hello. Note that this should be set only by applications that try to reconnect with a downgraded protocol version. See RFC7507 for details.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.DisableTls13CompatMode">
+            <summary>
+            will disable TLS 1.3 middlebox compatibility mode (RFC8446, Appendix D.4) for non-compliant middleboxes.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Verify_AllowBroken">
+            <summary>
+            will allow signatures with known to be broken algorithms (such as MD5 or SHA1) in certificate chains.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Verify_AllowSignRsaMd5">
+            <summary>
+            will allow RSA-MD5 signatures in certificate chains.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Verify_AllowSignWithSha1">
+            <summary>
+            will allow signatures with SHA1 hash algorithm in certificate chains.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Verify_DisableCrlChecks">
+            <summary>
+            will disable CRL or OCSP checks in the verification of the certificate chain.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuAdvanced.Verify_AllowX509V1CaCrt">
+            <summary>
+            will allow V1 CAs in chains.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Enums.GnuCommand">
+            <summary>
+            A configuration option for the GnuTLS security suite.
+            Source : https://www.gnutls.org/manual/gnutls.html#tab_003aprio_002dkeywords
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuOperator.Include">
+            <summary>
+            Includes the given `Command` into the active configuration.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuOperator.Exclude">
+            <summary>
+            Excludes the given `Command` from the active configuration.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Enums.GnuProfile">
+            <summary>
+            Security profile to use for GnuTLS protocol handler.
+            Source : https://www.gnutls.org/manual/gnutls.html#tab_003akey_002dsizes
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.None">
+            <summary>
+            No profile specified, so configuration is based on the `SecuritySuite` setting.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.Low">
+            <summary>
+            Very short term protection against agencies (corresponds to ENISA legacy level)
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.Legacy">
+            <summary>
+            Legacy standard level
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.Medium">
+            <summary>
+            Medium-term protection
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.High">
+            <summary>
+            Long term protection (corresponds to ENISA future level)
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.Ultra">
+            <summary>
+            Even longer term protection
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuProfile.Future">
+            <summary>
+            Foreseeable future
+            </summary>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.Enums.GnuSuite">
+            <summary>
+            Security suite to use for GnuTLS protocol handler.
+            Source : https://www.gnutls.org/manual/gnutls.html#tab_003aprio_002dkeywords
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Performance">
+            <summary>
+            Enable all secure ciphersuites, limited to 128 bit ciphers and sorted by terms of speed performance. The message authenticity security level is of 64 bits or more, and the certificate verification profile is set to GNUTLS_PROFILE_LOW (80-bits).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Normal">
+            <summary>
+            Enable all secure ciphersuites. The ciphers are sorted by security margin, although the 256-bit ciphers are included as a fallback only. The message authenticity security level is of 64 bits or more, and the certificate verification profile is set to GNUTLS_PROFILE_LOW (80-bits).
+            This priority string implicitly enables ECDHE and DHE. The ECDHE ciphersuites are placed first in the priority order, but due to compatibility issues with the DHE ciphersuites they are placed last in the priority order, after the plain RSA ciphersuites. 
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Legacy">
+            <summary>
+            This sets the NORMAL settings that were used for GnuTLS 3.2.x or earlier. There is no verification profile set, and the allowed DH primes are considered weak today (but are often used by misconfigured servers).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.PerfectForwardSecrecy">
+            <summary>
+            Enable all secure ciphersuites that support perfect forward secrecy (ECDHE and DHE). The ciphers are sorted by security margin, although the 256-bit ciphers are included as a fallback only. The message authenticity security level is of 80 bits or more, and the certificate verification profile is set to GNUTLS_PROFILE_LOW (80-bits). This option is available since 3.2.4 or later.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Secure128">
+            <summary>
+            Enable all known to be secure ciphersuites that offer a security level 128-bit or more. The message authenticity security level is of 80 bits or more, and the certificate verification profile is set to GNUTLS_PROFILE_LOW (80-bits).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Secure192">
+            <summary>
+            Enable all secure ciphersuites that offer a security level 192-bit or more. The message authenticity security level is of 128 bits or more, and the certificate verification profile is set to GNUTLS_PROFILE_HIGH (128-bits).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.Secure256">
+            <summary>
+            Currently alias for SECURE192. This option, will enable ciphers which use a 256-bit key but, due to limitations of the TLS protocol, the overall security level will be 192-bits (the security level depends on more factors than cipher key size).
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.NsaSuiteB128">
+            <summary>
+            Enable all the NSA Suite B cryptography (RFC5430) ciphersuites with an 128 bit security level, as well as the enabling of the corresponding verification profile.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.NsaSuiteB192">
+            <summary>
+            Enable all the NSA Suite B cryptography (RFC5430) ciphersuites with an 192 bit security level, as well as the enabling of the corresponding verification profile.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.Enums.GnuSuite.None">
+            <summary>
+            Nothing is enabled. You will have to manually add `SecurityOptions` and specify the security features that you want enabled. 
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.SecuritySuite">
+            <summary>
+            Which security suite to use as a starting point.
+            The suite enables a fully pre-configured configuration, which is then manually modified using `SecurityOptions`.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.SecurityOptions">
+            <summary>
+            Additional options to add to the basic security suite specified by `SecuritySuite`.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.SecurityProfile">
+            <summary>
+            Which security profile to use (advanced option that is not normally needed).
+            If you set this, you don't need to set individual `SecurityOptions`.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.AdvancedOptions">
+            <summary>
+            Additional options to configure GnuTLS protocol handling.
+            (advanced flags that are not normally needed).
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.SetALPNControlConnection">
+            <summary>
+            Options to configure GnuTLS ALPN protocol(s) setting.
+            To disable the setting of the ALPN protocol(s) string, use string.Empty.
+            </summary>
+        </member>
+        <member name="F:FluentFTP.GnuTLS.GnuConfig.LoadLibraryDllNamePrefix">
+            <summary>
+            Add an optional string prefix to the LoadLibrary dllname. For ClickOnce
+            Single File deployment, specify "ClickOnceSingleFile" instead of a path and
+            use "IncludeAllContentForSelfExtract" set to True in your apps .csproj 
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.HandshakeTimeout">
+            <summary>
+            How long to wait for a handshake before giving up, in milliseconds.
+            Set to zero to disable.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.CommTimeout">
+            <summary>
+            How long to wait for a RECV, SEND, HANDSHAKE or BYE API call before giving up,
+            in milliseconds.
+            Minimum allowed value is 15000.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.PollTimeout">
+            <summary>
+            How long to wait for a connectivity socket poll, in milliseconds.
+            Set to zero to disable.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.LogLevel">
+            <summary>
+            Select the maximum verbosity of the GnuTLS messages which are logged with serverity "verbose".
+            The allowed values are 0-99, where 0 suppresses GnuTls related messages entirely, and 99 includes every possible message.
+            Consult the online docs for more help.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.LogMessages">
+            <summary>
+            What additional debug information to log? You can combine multiple of these.
+            These messages all carry a log level of "1", so to see them you must set
+            LogLevel (see above) to at least "1" or more.
+            </summary>
+        </member>
+        <member name="P:FluentFTP.GnuTLS.GnuConfig.LogLength">
+            <summary>
+            In case of a catastrophic failure, how many messages at maximum
+            verbosity should be output prior to termination.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.GnuOption">
+            <summary>
+            Either includes or excludes this `Command` from the protocol security suite, depending on the `Operator` given.
+            </summary>
+        </member>
+        <member name="T:FluentFTP.GnuTLS.GnuTlsInternalStream">
+            <summary>
+            Adds support for GnuTLS TLS1.2 and TLS1.3 (with session resume capability)
+            for FluentFTP by using a .NET c# wrapper for GnuTLS.
+            </summary>
+        </member>
+    </members>
+</doc>
