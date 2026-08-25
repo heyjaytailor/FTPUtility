@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.37507.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FTPUtility", "FTPUtility.csproj", "{0AAE97F5-3E04-4B6F-B09C-223991A0D08F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AAE97F5-3E04-4B6F-B09C-223991A0D08F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AAE97F5-3E04-4B6F-B09C-223991A0D08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AAE97F5-3E04-4B6F-B09C-223991A0D08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AAE97F5-3E04-4B6F-B09C-223991A0D08F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38FF62AD-3B34-4FA5-8420-573F0A2BD029}
+	EndGlobalSection
+EndGlobal
